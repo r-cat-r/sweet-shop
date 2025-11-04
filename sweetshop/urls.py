@@ -17,14 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from inventory.views import list_sweets, add_sweet, buy_sweet, restock_sweet
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from inventory.views import login_user
+
 from inventory.views import user_info
+from inventory.views import register_user
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
-    path("api/login/", TokenObtainPairView.as_view()),
+
+    path("api/login/", login_user),
+    path("api/register/", register_user),
+
     path("api/refresh/", TokenRefreshView.as_view()),
 
     path("api/sweets/", list_sweets),

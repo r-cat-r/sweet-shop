@@ -50,3 +50,42 @@ def user_info(request):
         "username": request.user.username,
         "is_staff": request.user.is_staff
     })
+from django.contrib.auth.models import User
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['POST'])
+def register_user(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    if not username or not password:
+        return Response({"message": "Username & password required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(username=username).exists():
+        return Response({"message": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.create_user(username=username, password=password)
+    return Response({"message": "User created successfully"})
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+
+@api_view(['POST'])
+def login_user(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    
+    user = authenticate(username=username, password=password)
+    print("aaaaaa",user)
+    if user is None:
+        return Response({"detail": "Invalid credentials"}, status=400)
+
+    refresh = RefreshToken.for_user(user)
+
+    return Response({
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+        "username": user.username,
+        "is_staff": user.is_staff
+    })

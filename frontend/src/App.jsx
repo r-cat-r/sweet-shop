@@ -5,12 +5,18 @@ import Dashboard from "./Dashboard.jsx";
 function App() {
   const [token, setToken] = useState(null);
 
+  // ✅ Logout handler
+  function handleLogout() {
+    setToken(null);
+  }
+
   return (
     <>
+      {/* If no token, show login page */}
       {!token ? (
-        <Login onLogin={setToken} />
+        <Login onLogin={(tok) => setToken(tok)} />
       ) : (
-        <Dashboard token={token} />
+        <Dashboard token={token} onLogout={handleLogout} />
       )}
     </>
   );
